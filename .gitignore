@@ -1,0 +1,12 @@
+node_modules/
+app/assets/js/
+
+*.log
+*.tmp
+
+.tmp/
+logs/
+tmp/
+
+.DS_Store
+Thumbs.db

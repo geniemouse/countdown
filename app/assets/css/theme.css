@@ -1,0 +1,21 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 40px;
+    font-family: sans-serif;
+}
+
+time > span {
+    display: inline-block;
+}
+
+time > span + span::before {
+    margin: 0 10px;
+    content: ":";
+}
+

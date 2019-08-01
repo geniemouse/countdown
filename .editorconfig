@@ -1,0 +1,35 @@
+# EditorConfig settings
+# =====================
+# -- https://editorconfig.org
+# -- https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
+#
+# Maintain consistent coding styles for multiple developers working on the same
+# project across various editors and IDEs.
+#
+# @NOTE:
+# - Editor/IDE may require add-on/extension install to read this file
+# - If using Prettier to format code, keep the settings between the two configs
+#   consistent
+
+# All files
+root = true
+
+[*]
+
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
+
+
+# Specific file-type settings
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+
+[*.json]
+indent_style = space
+indent_size = 2
