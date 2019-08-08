@@ -1,23 +1,28 @@
-import * as countDown from "./modules/countdown.js";
+import countDown from "./modules/countdown.js";
 
+// DOM elements
+const $target = document.querySelector(".target-date");
 const $countdown = document.querySelector(".countdown");
 const $days = $countdown.querySelector(".days");
 const $hours = $countdown.querySelector(".hours");
 const $minutes = $countdown.querySelector(".minutes");
 const $seconds = $countdown.querySelector(".seconds");
 
-var dateTarget = new Date($countdown.getAttribute("datetime"));
-var target = dateTarget.getTime();
-// var target = Date.now() + 1000 * 65;
+function getDateTarget(datetime) {
+    const date = new Date(datetime);
+    return {
+        date,
+        milliseconds: date.getTime()
+    };
+}
 
-console.log("What is target date? ", new Date(target));
+const { date, milliseconds } = getDateTarget($countdown.getAttribute("datetime"));
+const demoCountDown = countDown(milliseconds - Date.now());
+// const demoCountDown = countDown(123456789);
+console.log("demoCountDown: ", demoCountDown);
 
-let prev = countDown.getCountDownUnits(target - Date.now());
-
-$days.textContent = prev.days;
-$hours.textContent = prev.hours;
-$minutes.textContent = prev.minutes;
-$seconds.textContent = prev.seconds;
+// Update DOM elements
+$target.textContent = date;
 
 function updateUnit(previous, next, element) {
     if (next !== previous) {
@@ -26,16 +31,20 @@ function updateUnit(previous, next, element) {
 }
 
 function updateCountDown(data) {
-    updateUnit(prev.days, data.days, $days);
-    updateUnit(prev.hours, data.hours, $hours);
-    updateUnit(prev.minutes, data.minutes, $minutes);
+    // updateUnit(prev.days, data.days, $days);
+    // updateUnit(prev.hours, data.hours, $hours);
+    // updateUnit(prev.minutes, data.minutes, $minutes);
+
+    $days.textContent = data.days;
+    $hours.textContent = data.hours;
+    $minutes.textContent = data.minutes;
+
     $seconds.textContent = data.seconds;
-    prev = { ...data };
+    // prev = { ...data };
 }
 
-countDown.startCountDown(target - Date.now(), {
+demoCountDown.start({
     func: (data) => {
         requestAnimationFrame(() => updateCountDown(data));
     }
 });
-
