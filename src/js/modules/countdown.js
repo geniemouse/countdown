@@ -6,6 +6,8 @@
  * cd.state()
  * cd.start()
  * cd.stop()
+ * cd.pause()
+ * cd.resume()
  *
  */
 
@@ -18,11 +20,20 @@ const MILLISECOND_HOUR = 3600000; // 1000ms * 60s * 60mins
 const MILLISECOND_MINUTE = 60000; // 1000ms * 60s
 const MILLISECOND_SECOND = 1000; // 1000ms * 1s
 
-function returnFunction(value) {
-    // this[key] = value;
+// @todo:
+// Perhaps a elements hook function???
+// Add zero as an option -> makes values into strings
+// const addZero = (x) => (x < 10 && x >= 0 ? "0" + x : x);
+
+function fn(value) {
     return function() {
         return value;
     };
+}
+
+function stopTimer() {
+    clearTimeout(this.timerId());
+    this.timerId = fn(null);
 }
 
 /**
@@ -74,20 +85,21 @@ function getData(time) {
 /**
  * Start countdown, exposed as `COUNTDOWN_INSTANCE.start()`
  * @param  {Number} time    -- Time in milliseconds
- * @param  {Object} options -- (Optional) Settings
+ * @param  {Object} options -- (Optional) Defaults: { interval: 1000, onStep: () => {} }
  * @return {Undefined}
  */
 function startCountDown(time, options = {}) {
-    const { interval = MILLISECOND_SECOND, func = new Function() } = options;
+    const { interval, onStep } = options;
     let data = getData(time);
-    this.state = returnFunction(data);
+    this.state = fn(data);
 
     function hasTimeLeft() {
         return data.target / interval > 1;
     }
 
-    // Countdown is already over, so let's get out of here!
-    if (!hasTimeLeft()) {
+    // Quick get-out clauses:
+    // Countdown is already over, or timer already in progress
+    if (!hasTimeLeft() || this.timerId()) {
         return;
     }
 
@@ -110,13 +122,13 @@ function startCountDown(time, options = {}) {
 
             // Expose countdown globally useful information
             // Return as functions, so the actual values are kept private
-            context._timer = returnFunction(timer);
-            context.state = returnFunction(data);
+            context.timerId = fn(timer);
+            context.state = fn(data);
 
             // Make the callback
-            func.call(null, data);
+            onStep.call(null, data);
         } else {
-            clearTimeout(timer);
+            stopTimer.call(context);
         }
 
         return timer;
@@ -125,41 +137,65 @@ function startCountDown(time, options = {}) {
 
 /**
  * Stop the countdown
- * @param  {Function} timer   -- Get the current `setTimeout` id
- * @param  {Object} options -- (Optional) Settings; e.g. { reset: true }
+ * @param  {Object} options     -- (Optional) Defaults: { onReset: () => {}, reset: false }
  * @return {Undefined|Object}
  */
-function stopCountDown(timer, options = {}) {
-    const { reset = false } = options;
-    clearTimeout(timer());
+function stopCountDown(options = {}) {
+    const { reset, onReset } = options;
+    stopTimer.call(this);
     if (reset) {
-        return getData(0);
+        return onReset.call(null, getData(0));
     }
 }
 
 /**
  * Countdown API wrapper
- * @param  {Number} milliseconds -- Time in milliseconds
- * @return {Object} -- cf. Example usage section at file top
+ * @param  {Number} milliseconds    -- Time in milliseconds
+ * @return {Object}                 -- cf. Example usage section at file top
  */
-export default function countDown(milliseconds) {
+export default function countDown(milliseconds, options = {}) {
+    const countDownSettings = {
+        interval: MILLISECOND_SECOND,
+        onStep: () => {},
+        onReset: (data) => data,
+        ...options
+    };
+    let pausedTimeStamp;
+
     function units() {
         return getData.call(this, milliseconds);
     }
 
-    function start(options) {
-        return startCountDown.call(this, milliseconds, options);
+    function start() {
+        return startCountDown.call(this, milliseconds, countDownSettings);
     }
 
-    function stop(options) {
-        return stopCountDown.call(this, this._timer, options);
+    function stop(options = {}) {
+        const { reset = true } = options;
+        const { onReset } = countDownSettings;
+        return stopCountDown.call(this, {
+            onReset,
+            reset
+        });
+    }
+
+    function pause() {
+        const currentTimeRemaining = this.state().target;
+        stopTimer.call(this);
+        pausedTimeStamp = currentTimeRemaining;
+    }
+
+    function resume() {
+        return startCountDown.call(this, pausedTimeStamp, countDownSettings);
     }
 
     return {
-        initialstate: returnFunction(units()),
-        state: returnFunction({}),
+        initialstate: fn(units()),
+        state: fn({}),
+        timerId: fn(null),
+        pause,
+        resume,
         start,
-        stop,
-        _timer: returnFunction(null)
+        stop
     };
 }
