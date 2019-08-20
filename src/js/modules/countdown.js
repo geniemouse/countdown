@@ -2,8 +2,8 @@
  * Example usage:
  * @todo
  *
- * cd.initialstate()
- * cd.state()
+ * cd.calculation()
+ * cd.status()
  * cd.start()
  * cd.stop()
  * cd.pause()
@@ -22,8 +22,6 @@ const MILLISECOND_SECOND = 1000; // 1000ms * 1s
 
 // @todo:
 // Perhaps a elements hook function???
-// Add zero as an option -> makes values into strings
-// const addZero = (x) => (x < 10 && x >= 0 ? "0" + x : x);
 
 function fn(value) {
     return function() {
@@ -34,6 +32,15 @@ function fn(value) {
 function stopTimer() {
     clearTimeout(this.timerId());
     this.timerId = fn(null);
+}
+
+function addZero(units) {
+    Object.keys(units).map((unit) => {
+        const value = Number(units[unit]);
+        return (units[unit] = value >= 0 && value < 10 ? `0${value}` : `${value}`);
+    });
+
+    return units;
 }
 
 /**
@@ -89,9 +96,8 @@ function getData(time) {
  * @return {Undefined}
  */
 function startCountDown(time, options = {}) {
-    const { interval, onStep } = options;
+    const { interval, onStep, zeroBased } = options;
     let data = getData(time);
-    this.state = fn(data);
 
     function hasTimeLeft() {
         return data.target / interval > 1;
@@ -108,31 +114,32 @@ function startCountDown(time, options = {}) {
         // more breathing space for garbage collection, etc
         const timer = setTimeout(tick, interval, context);
 
-        if (hasTimeLeft()) {
-            // Manually countdown seconds; avoids need need to call `getData(...)`
-            // (four recursive calls) every second
-            data.target -= interval;
-
-            if (data.seconds > 0) {
-                data.seconds -= 1;
-            } else {
-                // Call `getData(...)` once a minute
-                data = getData(data.target);
-            }
-
-            // Expose countdown globally useful information
-            // Return as functions, so the actual values are kept private
-            context.timerId = fn(timer);
-            context.state = fn(data);
-
-            // Make the callback
-            onStep.call(null, data);
-        } else {
+        if (!hasTimeLeft()) {
             stopTimer.call(context);
+            return;
         }
 
-        return timer;
+        // Manually countdown seconds; avoids need need to call `getData(...)`
+        // (four recursive calls) every second
+        data.target -= interval;
+
+        if (data.seconds > 0) {
+            data.seconds -= 1;
+        } else {
+            // Call `getData(...)` once a minute
+            data = getData(data.target);
+        }
+
+        // Expose countdown globally useful information
+        // Return as functions, so the actual values are kept private
+        context.timerId = fn(timer);
+        context.status = fn(zeroBased ? addZero(data) : data);
+
+        // Make the callback
+        onStep.call(null, data);
     })(this);
+
+    return data;
 }
 
 /**
@@ -156,6 +163,7 @@ function stopCountDown(options = {}) {
 export default function countDown(milliseconds, options = {}) {
     const countDownSettings = {
         interval: MILLISECOND_SECOND,
+        zeroBased: true,
         onStep: () => {},
         onReset: (data) => data,
         ...options
@@ -180,7 +188,7 @@ export default function countDown(milliseconds, options = {}) {
     }
 
     function pause() {
-        const currentTimeRemaining = this.state().target;
+        const currentTimeRemaining = this.status().target;
         stopTimer.call(this);
         pausedTimeStamp = currentTimeRemaining;
     }
@@ -190,8 +198,8 @@ export default function countDown(milliseconds, options = {}) {
     }
 
     return {
-        initialstate: fn(units()),
-        state: fn({}),
+        calculation: fn(units()),
+        status: fn({}),
         timerId: fn(null),
         pause,
         resume,

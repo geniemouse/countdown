@@ -75,6 +75,9 @@ function updateCountDown2(data) {
     $seconds2.textContent = data.seconds;
 }
 
+const sum1 = demoCountDown.status();
+console.log("sum1: ", sum1);
+
 demoCountDown.start();
 demoCountDown2.start();
 
