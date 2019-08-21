@@ -31,6 +31,7 @@ const demoCountDown = countDown(milliseconds - Date.now(), {
     },
     onReset: (data) => {
         console.log("[Countdown #1] onReset was called");
+        requestAnimationFrame(() => updateCountDown(data));
     }
 });
 
@@ -40,6 +41,7 @@ const demoCountDown2 = countDown(123456, {
     },
     onReset: (data) => {
         console.log("[Countdown #2] onReset was called");
+        requestAnimationFrame(() => updateCountDown2(data));
     }
 });
 
@@ -75,8 +77,8 @@ function updateCountDown2(data) {
     $seconds2.textContent = data.seconds;
 }
 
-const sum1 = demoCountDown.status();
-console.log("sum1: ", sum1);
+// const sum1 = demoCountDown.status();
+// console.log("sum1: ", sum1);
 
 demoCountDown.start();
 demoCountDown2.start();
