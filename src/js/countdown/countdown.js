@@ -131,6 +131,7 @@ function countDown(milliseconds, options = {}) {
         // Quick get-out clauses:
         // Countdown is already over, or timer already in progress
         if (!hasTimeLeft() || timerId) {
+            // @todo: Add onExpired callback?
             return;
         }
 
@@ -149,10 +150,11 @@ function countDown(milliseconds, options = {}) {
 
     function stop(options = {}) {
         const { reset } = options;
-        const { onReset } = countDownSettings;
+        const { onReset, zeroBased } = countDownSettings;
         stopTimer();
         if (reset) {
-            onReset.call(this, getCountDownData(0));
+            data = getCountDownData(0);
+            onReset.call(this, zeroBased ? addZero(data) : data);
         }
     }
 

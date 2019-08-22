@@ -1,4 +1,4 @@
-import countDown from "./modules/countdown.js";
+import countDown from "./countdown/countdown.js";
 
 // DOM elements
 const $target = document.querySelector(".target-date");
