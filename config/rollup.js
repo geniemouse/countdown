@@ -1,3 +1,5 @@
+import resolve from "rollup-plugin-node-resolve";
+import babel from "rollup-plugin-babel";
 import browsersync from "rollup-plugin-browsersync";
 import replace from "rollup-plugin-replace";
 import rimraf from "rimraf";
@@ -27,6 +29,10 @@ export default {
                 baseDir: `./app/`
                 // directory: true
             }
+        }),
+        resolve(),
+        babel({
+            exclude: "node_modules/**" // only transpile our source code
         })
     ]
 };

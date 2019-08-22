@@ -1,5 +1,7 @@
-node_modules/
+
 app/assets/js/
+coverage/
+node_modules/
 
 *.log
 *.tmp
