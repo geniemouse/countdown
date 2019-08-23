@@ -72,13 +72,16 @@ function countDown(milliseconds, options = {}) {
     const countDownSettings = {
         interval: MILLISECOND_SECOND,
         zeroBased: true,
+        onInit: () => {},
         onStep: () => {},
-        onReset: (data) => data,
+        onReset: () => {},
+        onEnd: () => {},
         ...options
     };
 
     let data = null;
     let pausedTimeStamp = null;
+    let timerExpired = null;
     let timerId = null;
 
     function addZero(units) {
@@ -93,18 +96,16 @@ function countDown(milliseconds, options = {}) {
     function hasTimeLeft() {
         const { interval } = countDownSettings;
         const { target } = data;
-        return target / interval > 1;
+        return target / interval >= 1;
     }
 
     function tick() {
-        const { interval, onStep, zeroBased } = countDownSettings;
-        // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
-        // more breathing space for garbage collection, etc
-        timerId = setTimeout(tick, interval);
+        const { interval, onEnd, onStep, zeroBased } = countDownSettings;
 
         if (!hasTimeLeft()) {
-            // @todo: Add onFinished callback
             stopTimer();
+            onEnd.call(this, zeroBased ? addZero(data) : data);
+            timerExpired = true;
             return;
         }
 
@@ -120,21 +121,20 @@ function countDown(milliseconds, options = {}) {
             data = getCountDownData(data.target);
         }
 
-        // Make the callback
         onStep.call(this, zeroBased ? addZero(data) : data);
+
+        // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
+        // more breathing space for garbage collection, etc
+        timerId = setTimeout(tick, interval);
     }
 
     function startTimer(time) {
-        const { interval, onStep, zeroBased } = countDownSettings;
-        data = getCountDownData(time);
-
         // Quick get-out clauses:
         // Countdown is already over, or timer already in progress
-        if (!hasTimeLeft() || timerId) {
-            // @todo: Add onExpired callback?
+        if (!hasTimeLeft() || timerId || timerExpired) {
             return;
         }
-
+        data = time !== data.target ? getCountDownData(time) : data;
         tick();
         return data;
     }
@@ -155,6 +155,7 @@ function countDown(milliseconds, options = {}) {
         if (reset) {
             data = getCountDownData(0);
             onReset.call(this, zeroBased ? addZero(data) : data);
+            timerExpired = true;
         }
     }
 
@@ -170,6 +171,12 @@ function countDown(milliseconds, options = {}) {
         startTimer(pausedTimeStamp);
         pausedTimeStamp = null;
     }
+
+    (function init() {
+        const { onInit, zeroBased } = countDownSettings;
+        data = getCountDownData(milliseconds);
+        onInit.call(this, zeroBased ? addZero(data) : data);
+    })();
 
     // PUBLIC API
     return {

@@ -25,17 +25,25 @@ function getDateTarget(datetime) {
 
 const { date, milliseconds } = getDateTarget($countdown.getAttribute("datetime"));
 
-const demoCountDown = countDown(milliseconds - Date.now(), {
-    onStep: (data) => {
-        requestAnimationFrame(() => updateCountDown(data));
-    },
-    onReset: (data) => {
-        console.log("[Countdown #1] onReset was called");
-        requestAnimationFrame(() => updateCountDown(data));
-    }
-});
+// const demoCountDown = countDown(milliseconds - Date.now(), {
+//     onStep: (data) => {
+//         requestAnimationFrame(() => updateCountDown(data));
+//     },
+//     onReset: (data) => {
+//         console.log("[Countdown #1] onReset was called");
+//         requestAnimationFrame(() => updateCountDown(data));
+//     }
+// });
 
-const demoCountDown2 = countDown(123456, {
+// 123456
+const demoCountDown2 = countDown(5000, {
+    onInit: (data) => {
+        console.log("[Countdown #2] onInit was called", data);
+        requestAnimationFrame(() => updateCountDown2(data));
+    },
+    onEnd: (data) => {
+        console.log("[Countdown #2] onEnd was called", data);
+    },
     onStep: (data) => {
         requestAnimationFrame(() => updateCountDown2(data));
     },
@@ -45,7 +53,7 @@ const demoCountDown2 = countDown(123456, {
     }
 });
 
-console.log("demoCountDown: ", demoCountDown);
+// console.log("demoCountDown: ", demoCountDown);
 console.log("demoCountDown2: ", demoCountDown2);
 
 // Update DOM elements
@@ -80,11 +88,10 @@ function updateCountDown2(data) {
 // const sum1 = demoCountDown.status();
 // console.log("sum1: ", sum1);
 
-demoCountDown.start();
-demoCountDown2.start();
+// demoCountDown.start();
+// demoCountDown2.start();
 
 // setTimeout(() => {
 //     console.log("Stop countdown #1");
 //     demoCountDown.stop();
 // }, 4000);
-
