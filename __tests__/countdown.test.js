@@ -8,30 +8,9 @@ const zeroedData = {
     seconds: 0
 };
 
-const initCallback = jest.fn((data) => data);
-const stepCallback = jest.fn((data) => data);
-const resetCallback = jest.fn((data) => data);
-const endCallback = jest.fn((data) => data);
-
-const defaultOptions = {
-    zeroBased: false,
-    onInit: (data) => {
-        initCallback(data);
-    },
-    onStep: (data) => {
-        stepCallback(data);
-    },
-    onReset: (data) => {
-        resetCallback(data);
-    },
-    onEnd: (data) => {
-        endCallback(data);
-    }
-};
-
 function createCountDown(ms_time, options = {}) {
     return countDown(ms_time, {
-        ...defaultOptions,
+        zeroBased: false,
         ...options
     });
 }
@@ -43,6 +22,7 @@ describe("Countdown module", () => {
 
     afterAll(() => {
         jest.clearAllTimers();
+        jest.resetAllMocks();
     });
 
     it("exports as expected", () => {
@@ -63,36 +43,67 @@ describe("Countdown module", () => {
         );
     });
 
-    it("runs onInit callback", () => {
-        const demo = createCountDown(123456000);
+    it("starting an expired timer will do nothing (fails silently)", () => {
+        const stepCallback = jest.fn((data) => data);
+        const demo = createCountDown(-50, {
+            zeroBased: false,
+            onStep: (data) => stepCallback(data)
+        });
+        demo.start();
+        jest.runAllTimers();
+        expect(stepCallback).toHaveBeenCalledTimes(0);
+    });
+
+    it("default onInit, onStep, onReset, onEnd callbacks run without error", () => {
+        expect(() => {
+            // onInit, onStep & onReset callback defaults
+            const demo = countDown(1000);
+            const spyStart = jest.spyOn(demo, "start");
+            const spyStop = jest.spyOn(demo, "stop");
+            demo.start();
+            demo.stop({ reset: true });
+        }).not.toThrow("Cannot read property 'call'");
+
+        expect(() => {
+            // onEnd callback default
+            const demo = countDown(1000);
+            demo.start();
+            jest.runAllTimers();
+        }).not.toThrow("Cannot read property 'call'");
+    });
+
+    it("zero-based option, units are strings; any values below 10 lead with a zero", () => {
+        const nineDDHHMMSS = 810549000;
+        const initCallback = jest.fn((data) => data);
+        const demo = createCountDown(nineDDHHMMSS, {
+            zeroBased: true,
+            onInit: (data) => initCallback(data)
+        });
+
         expect(initCallback).toHaveReturnedWith({
-            target: 123456000,
-            days: 1,
-            hours: 10,
-            minutes: 17,
-            seconds: 36
+            target: String(nineDDHHMMSS),
+            days: "09",
+            hours: "09",
+            minutes: "09",
+            seconds: "09"
         });
     });
 
-    it("starting an expired timer will do nothing (fails silently)", () => {
-        const demo = createCountDown(0);
+    it("ticking over the one minute mark", () => {
+        const sixtyOneSeconds = 61000;
+        const demo = createCountDown(sixtyOneSeconds);
         demo.start();
-        jest.runAllTimers();
-        expect(setTimeout).toHaveBeenCalledTimes(0);
-    });
-
-    xit("loops the expected number of times", () => {
-        const demo = createCountDown(3000);
-        demo.start();
-        jest.runAllTimers();
-        expect(setTimeout).toHaveBeenCalledTimes(3);
+        jest.advanceTimersByTime(1000);
+        const status = demo.status();
+        expect(status.minutes).toBe(0);
+        expect(status.seconds).toBe(59);
     });
 
     it("runs onStep callback the expected number of times", () => {
+        const stepCallback = jest.fn((data) => data);
         const demo = createCountDown(3000, {
-            onStep: (data) => {
-                stepCallback(data.seconds);
-            }
+            zeroBased: false,
+            onStep: (data) => stepCallback(data.seconds)
         });
         demo.start();
         jest.runAllTimers();
@@ -103,45 +114,46 @@ describe("Countdown module", () => {
     });
 
     it("runs onEnd callback when countdown finishes", () => {
-        const demo = createCountDown(3000);
+        const endCallback = jest.fn((data) => data);
+        const demo = createCountDown(3000, {
+            zeroBased: false,
+            onEnd: (data) => endCallback(data)
+        });
         demo.start();
         jest.runAllTimers();
         expect(endCallback).toHaveReturnedWith(zeroedData);
     });
 
-    it("stopped countdown prevents any further updates", () => {
-        const demo = createCountDown(3000);
+    it("stopped countdown prevents does not update further", () => {
+        const demo = createCountDown(3000, {
+            zeroBased: false
+        });
+        let stoppedStatus;
         demo.start();
         jest.advanceTimersByTime(1000);
-        demo.stop();
-        const stoppedStatus = demo.status();
-        jest.advanceTimersByTime(1000);
+        stoppedStatus = demo.stop();
+        jest.runAllTimers();
         expect(demo.status()).toStrictEqual(expect.objectContaining(stoppedStatus));
     });
 
-    it("stopping with reset flag zeroes time units and runs onReset callback", () => {
-        const demo = createCountDown(3000);
+    it("stopping/reset flag zeroes time units & runs onReset callback", () => {
+        const resetCallback = jest.fn((data) => data);
+        const demo = createCountDown(3000, {
+            zeroBased: false,
+            onReset: (data) => resetCallback(data)
+        });
         demo.stop({ reset: true });
         expect(resetCallback).toHaveReturnedWith(zeroedData);
     });
 
-    // it("should pad values less than 10 with a leading zero", () => {
-    //     let startDemo = countDown(data.input, { zeroBased: true });
-    //     expect(startDemo.status()).toStrictEqual({
-    //         days: 0,
-    //         hours: 0,
-    //         minutes: 0,
-    //         seconds: 0
-    //     });
-    // });
-
-    // it("status() yields expected time unit breakdown at any given point", () => {
-    //     const threeMinsThreeSecs = 183000;
-    //     expect(demo.status()).toStrictEqual(expect.objectContaining(data.output));
-    //     demo.start();
-    //     // Fast-forward the countdown...
-    //     jest.advanceTimersByTime(threeMinsThreeSecs);
-    //     expect(demo.status().minutes).toBe(14);
-    //     expect(demo.status().seconds).toBe(32);
-    // });
+    it("resuming (after pausing) countdown restarts from the remaining time", () => {
+        const demo = createCountDown(3000);
+        let pausedStatus;
+        expect(demo.resume()).toBeUndefined();
+        demo.start();
+        expect(demo.resume()).toBeUndefined();
+        jest.advanceTimersByTime(1000);
+        pausedStatus = demo.pause();
+        expect(demo.resume().target).toBe(pausedStatus.target);
+    });
 });

@@ -89,7 +89,7 @@ function updateCountDown2(data) {
 // console.log("sum1: ", sum1);
 
 // demoCountDown.start();
-// demoCountDown2.start();
+demoCountDown2.start();
 
 // setTimeout(() => {
 //     console.log("Stop countdown #1");

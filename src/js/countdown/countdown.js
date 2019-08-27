@@ -70,7 +70,6 @@ function getCountDownData(time) {
  */
 function countDown(milliseconds, options = {}) {
     const countDownSettings = {
-        interval: MILLISECOND_SECOND,
         zeroBased: true,
         onInit: () => {},
         onStep: () => {},
@@ -79,7 +78,7 @@ function countDown(milliseconds, options = {}) {
         ...options
     };
 
-    let data = null;
+    let data = {};
     let pausedTimeStamp = null;
     let timerExpired = null;
     let timerId = null;
@@ -94,13 +93,12 @@ function countDown(milliseconds, options = {}) {
     }
 
     function hasTimeLeft() {
-        const { interval } = countDownSettings;
         const { target } = data;
-        return target / interval >= 1;
+        return target / MILLISECOND_SECOND >= 1;
     }
 
     function tick() {
-        const { interval, onEnd, onStep, zeroBased } = countDownSettings;
+        const { onEnd, onStep, zeroBased } = countDownSettings;
 
         if (!hasTimeLeft()) {
             stopTimer();
@@ -112,7 +110,7 @@ function countDown(milliseconds, options = {}) {
         // @todo: Extract to separate function?
         // Manually countdown seconds; avoids need need to call `getData(...)`
         // (four recursive calls) every second
-        data.target -= interval;
+        data.target -= MILLISECOND_SECOND;
 
         if (data.seconds > 0) {
             data.seconds -= 1;
@@ -125,7 +123,7 @@ function countDown(milliseconds, options = {}) {
 
         // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
         // more breathing space for garbage collection, etc
-        timerId = setTimeout(tick, interval);
+        timerId = setTimeout(tick, MILLISECOND_SECOND);
     }
 
     function startTimer(time) {
@@ -157,19 +155,20 @@ function countDown(milliseconds, options = {}) {
             onReset.call(this, zeroBased ? addZero(data) : data);
             timerExpired = true;
         }
+        return data;
     }
 
     function pause() {
         stopTimer();
         pausedTimeStamp = data.target;
+        return data;
     }
 
     function resume() {
         if (!pausedTimeStamp) {
             return;
         }
-        startTimer(pausedTimeStamp);
-        pausedTimeStamp = null;
+        return startTimer(pausedTimeStamp);
     }
 
     (function init() {
@@ -181,7 +180,8 @@ function countDown(milliseconds, options = {}) {
     // PUBLIC API
     return {
         status: () => {
-            return getCountDownData(!data ? milliseconds : data.target);
+            // @todo: addZero reading to this output as a nicety
+            return getCountDownData(data.target);
         },
         start,
         stop,
