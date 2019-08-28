@@ -1,4 +1,4 @@
-import countDown, { getCountDownData } from "../src/js/countdown/countdown";
+import countDown, { countDownTime, getCountDownData } from "../src/js/countdown/countdown";
 
 const zeroedData = {
     target: 0,
@@ -27,7 +27,20 @@ describe("Countdown module", () => {
 
     it("exports as expected", () => {
         expect(typeof countDown).toBe("function");
+        expect(typeof countDownTime).toBe("function");
         expect(typeof getCountDownData).toBe("function");
+    });
+
+    it("calculates countdown millisecond target value", () => {
+        expect(countDownTime()).toBe(0);
+        expect(
+            countDownTime({
+                days: 3,
+                hours: 12,
+                minutes: 5,
+                seconds: 0
+            })
+        ).toBe(302700000);
     });
 
     it("exposes the expected public API", () => {
@@ -43,7 +56,7 @@ describe("Countdown module", () => {
         );
     });
 
-    it("starting an expired timer will do nothing (fails silently)", () => {
+    it("starting an expired timer will do nothing", () => {
         const stepCallback = jest.fn((data) => data);
         const demo = createCountDown(-50, {
             zeroBased: false,
@@ -74,22 +87,24 @@ describe("Countdown module", () => {
 
     it("zero-based option, units are strings; any values below 10 lead with a zero", () => {
         const nineDDHHMMSS = 810549000;
+        const expectedOutput = {
+            target: String(nineDDHHMMSS),
+            days: "09",
+            hours: "09",
+            minutes: "09",
+            seconds: "09"
+        };
         const initCallback = jest.fn((data) => data);
         const demo = createCountDown(nineDDHHMMSS, {
             zeroBased: true,
             onInit: (data) => initCallback(data)
         });
 
-        expect(initCallback).toHaveReturnedWith({
-            target: String(nineDDHHMMSS),
-            days: "09",
-            hours: "09",
-            minutes: "09",
-            seconds: "09"
-        });
+        expect(initCallback).toHaveReturnedWith(expectedOutput);
+        expect(demo.status()).toStrictEqual(expectedOutput);
     });
 
-    it("ticking over the one minute mark", () => {
+    it("ticking over the one minute mark recalculates unit data", () => {
         const sixtyOneSeconds = 61000;
         const demo = createCountDown(sixtyOneSeconds);
         demo.start();
@@ -115,7 +130,7 @@ describe("Countdown module", () => {
 
     it("runs onEnd callback when countdown finishes", () => {
         const endCallback = jest.fn((data) => data);
-        const demo = createCountDown(3000, {
+        const demo = createCountDown(1000, {
             zeroBased: false,
             onEnd: (data) => endCallback(data)
         });
@@ -124,8 +139,8 @@ describe("Countdown module", () => {
         expect(endCallback).toHaveReturnedWith(zeroedData);
     });
 
-    it("stopped countdown prevents does not update further", () => {
-        const demo = createCountDown(3000, {
+    it("stopping countdown prevents further updates", () => {
+        const demo = createCountDown(2000, {
             zeroBased: false
         });
         let stoppedStatus;
@@ -136,9 +151,9 @@ describe("Countdown module", () => {
         expect(demo.status()).toStrictEqual(expect.objectContaining(stoppedStatus));
     });
 
-    it("stopping/reset flag zeroes time units & runs onReset callback", () => {
+    it("stopping with reset flag zeroes time units & runs onReset callback", () => {
         const resetCallback = jest.fn((data) => data);
-        const demo = createCountDown(3000, {
+        const demo = createCountDown(1000, {
             zeroBased: false,
             onReset: (data) => resetCallback(data)
         });

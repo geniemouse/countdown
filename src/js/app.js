@@ -1,4 +1,4 @@
-import countDown from "./countdown/countdown.js";
+import countDown, { countDownTime } from "./countdown/countdown.js";
 
 // DOM elements
 const $target = document.querySelector(".target-date");
@@ -15,6 +15,15 @@ const $hours2 = $countdown2.querySelector(".hours");
 const $minutes2 = $countdown2.querySelector(".minutes");
 const $seconds2 = $countdown2.querySelector(".seconds");
 
+const time_calc = countDownTime({
+    days: 3,
+    hours: 12,
+    minutes: 5,
+    seconds: 0
+});
+// 302700000
+console.log("time_calc: ", time_calc);
+
 function getDateTarget(datetime) {
     const date = new Date(datetime);
     return {
@@ -25,15 +34,15 @@ function getDateTarget(datetime) {
 
 const { date, milliseconds } = getDateTarget($countdown.getAttribute("datetime"));
 
-// const demoCountDown = countDown(milliseconds - Date.now(), {
-//     onStep: (data) => {
-//         requestAnimationFrame(() => updateCountDown(data));
-//     },
-//     onReset: (data) => {
-//         console.log("[Countdown #1] onReset was called");
-//         requestAnimationFrame(() => updateCountDown(data));
-//     }
-// });
+const demoCountDown = countDown(milliseconds - Date.now(), {
+    onStep: (data) => {
+        requestAnimationFrame(() => updateCountDown(data));
+    },
+    onReset: (data) => {
+        console.log("[Countdown #1] onReset was called");
+        requestAnimationFrame(() => updateCountDown(data));
+    }
+});
 
 // 123456
 const demoCountDown2 = countDown(5000, {
@@ -53,7 +62,7 @@ const demoCountDown2 = countDown(5000, {
     }
 });
 
-// console.log("demoCountDown: ", demoCountDown);
+console.log("demoCountDown: ", demoCountDown);
 console.log("demoCountDown2: ", demoCountDown2);
 
 // Update DOM elements
@@ -88,7 +97,7 @@ function updateCountDown2(data) {
 // const sum1 = demoCountDown.status();
 // console.log("sum1: ", sum1);
 
-// demoCountDown.start();
+demoCountDown.start();
 demoCountDown2.start();
 
 // setTimeout(() => {

@@ -19,18 +19,40 @@ const MILLISECOND_MINUTE = 60000; // 1000ms * 60s
 const MILLISECOND_SECOND = 1000; // 1000ms * 1s
 
 /**
- * Break the countdown millisecond value down into an object of units of time
- * @param  {Number} time -- Time in milliseconds
- * @return {Object}      -- e.g. { "target": 123456789, "days": 1, "hours": 10, "minutes": 17, "seconds": 36 }
+ * Helper function:
+ * Return an array of time unit key/values, suitable for iterating over
  */
-function getCountDownData(time) {
-    const units = [
+function setUnitMap() {
+    return [
         { name: "days", value: MILLISECOND_DAY },
         { name: "hours", value: MILLISECOND_HOUR },
         { name: "minutes", value: MILLISECOND_MINUTE },
         { name: "seconds", value: MILLISECOND_SECOND }
     ];
+}
 
+/**
+ * Calculate a countdown target time from an object of units/values
+ * @param  {Object} units -- e.g. { "days": 3, "hours": 12, "minutes": 5, "seconds": 0 }
+ * @return {Number}       -- time (in milliseconds)
+ */
+function countDownTime(units = {}) {
+    return setUnitMap().reduce((target, mapItem) => {
+        const { name, value } = mapItem;
+        if (units[name]) {
+            target += units[name] * value;
+        }
+        return target;
+    }, 0);
+}
+
+/**
+ * Break the countdown (millisecond) time value down into an object of units of time
+ * @param  {Number} time -- Time in milliseconds
+ * @return {Object}      -- e.g. { "target": 123456789, "days": 1, "hours": 10, "minutes": 17, "seconds": 36 }
+ */
+function getCountDownData(time) {
+    const units = setUnitMap();
     const result = {};
 
     /**
@@ -97,17 +119,7 @@ function countDown(milliseconds, options = {}) {
         return target / MILLISECOND_SECOND >= 1;
     }
 
-    function tick() {
-        const { onEnd, onStep, zeroBased } = countDownSettings;
-
-        if (!hasTimeLeft()) {
-            stopTimer();
-            onEnd.call(this, zeroBased ? addZero(data) : data);
-            timerExpired = true;
-            return;
-        }
-
-        // @todo: Extract to separate function?
+    function advanceTimerData() {
         // Manually countdown seconds; avoids need need to call `getData(...)`
         // (four recursive calls) every second
         data.target -= MILLISECOND_SECOND;
@@ -118,7 +130,19 @@ function countDown(milliseconds, options = {}) {
             // Call `getData(...)` once a minute
             data = getCountDownData(data.target);
         }
+    }
 
+    function tick() {
+        const { onEnd, onStep, zeroBased } = countDownSettings;
+
+        if (!hasTimeLeft()) {
+            stopTimer();
+            onEnd.call(this, zeroBased ? addZero(data) : data);
+            timerExpired = true;
+            return;
+        }
+
+        advanceTimerData();
         onStep.call(this, zeroBased ? addZero(data) : data);
 
         // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
@@ -180,8 +204,9 @@ function countDown(milliseconds, options = {}) {
     // PUBLIC API
     return {
         status: () => {
-            // @todo: addZero reading to this output as a nicety
-            return getCountDownData(data.target);
+            const { zeroBased } = countDownSettings;
+            const currentStatus = getCountDownData(data.target);
+            return zeroBased ? addZero(currentStatus) : currentStatus;
         },
         start,
         stop,
@@ -190,5 +215,5 @@ function countDown(milliseconds, options = {}) {
     };
 }
 
-export { getCountDownData };
+export { countDownTime, getCountDownData };
 export default countDown;
