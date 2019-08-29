@@ -1,15 +1,4 @@
 /**
- * Example usage:
- * @todo
- * cd.status()
- * cd.start()
- * cd.stop()
- * cd.pause()
- * cd.resume()
- *
- */
-
-/**
  * Time constants (commented sums to show workings)
  * @type {Number}
  */
