@@ -115,10 +115,10 @@ describe("Countdown module", () => {
     });
 
     it("runs onStep callback the expected number of times", () => {
-        const stepCallback = jest.fn((data) => data);
+        const stepCallback = jest.fn((next) => next);
         const demo = createCountDown(3000, {
             zeroBased: false,
-            onStep: (data) => stepCallback(data.seconds)
+            onStep: (prev, next) => stepCallback(next.seconds)
         });
         demo.start();
         jest.runAllTimers();

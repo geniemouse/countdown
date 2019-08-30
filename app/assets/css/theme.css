@@ -19,3 +19,40 @@ time > span + span::before {
     content: ":";
 }
 
+.countdown {
+    display: flex;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.countdown > * {
+    /*flex: 0 0 auto;*/
+    min-width: 6em;
+    margin: 0;
+    text-align: center;
+}
+
+.countdown > dd {
+    padding: 2em;
+    background-color: blue;
+    color: white;
+}
+
+.countdown > dd ~ dd::before {
+    margin: 0 1em 0 0;
+    content: ":";
+}
+
+.countdown > dt,
+.visually-hidden:not(:focus):not(:active) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    clip: rect(0, 0, 0, 0); /* Clip is a deprecated CSS property that many older browsers still support */
+    clip-path: inset(100%);
+    white-space: nowrap;
+    overflow: hidden;
+}

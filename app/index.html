@@ -13,30 +13,37 @@
         <link rel="stylesheet" type="text/css" href="./assets/css/theme.css" />
     </head>
     <body>
-        <h1>Countdown experiment</h1>
+        <h1>Countdown demos</h1>
 
-        <p>
-            Target date:
-            <span class="target-date">-</span>
-        </p>
+        <section>
+            <h2>Time to next New Year</h2>
+            <time class="newyear-date" datetime="2020-01-01T00:00:00">January 1</time>
 
-        <time class="countdown" datetime="2019-12-25T00:00:00">
-            <span class="days">-</span>
-            <span class="hours">-</span>
-            <span class="minutes">-</span>
-            <span class="seconds">-</span>
-        </time>
+            <dl class="countdown newyear-countdown">
+                <dt>Days</dt>
+                <dd class="days">-</dd>
+                <dt>Hours</dt>
+                <dd class="hours">-</dd>
+                <dt>Minutes</dt>
+                <dd class="minutes">-</dd>
+                <dt>Seconds</dt>
+                <dd class="seconds">-</dd>
+            </dl>
+        </section>
 
         <hr />
 
-        <p>Make sure we can run more than one at a time....</p>
+        <section>
+            <h2>Your three minute countdown</h2>
+            <time datetime="PT3M">3 minutes</time>
 
-        <time class="countdown2">
-            <span class="days">-</span>
-            <span class="hours">-</span>
-            <span class="minutes">-</span>
-            <span class="seconds">-</span>
-        </time>
+            <dl class="countdown threeminute-countdown">
+                <dt>Minutes</dt>
+                <dd class="minutes">-</dd>
+                <dt>Seconds</dt>
+                <dd class="seconds">-</dd>
+            </dl>
+        </section>
 
         <script src="./assets/js/bundle.js"></script>
     </body>

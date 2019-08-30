@@ -1,29 +1,5 @@
 import countDown, { countDownTime } from "./countdown/countdown.js";
 
-// DOM elements
-const $target = document.querySelector(".target-date");
-const $countdown = document.querySelector(".countdown");
-const $days = $countdown.querySelector(".days");
-const $hours = $countdown.querySelector(".hours");
-const $minutes = $countdown.querySelector(".minutes");
-const $seconds = $countdown.querySelector(".seconds");
-
-const $target2 = document.querySelector(".target-date2");
-const $countdown2 = document.querySelector(".countdown2");
-const $days2 = $countdown2.querySelector(".days");
-const $hours2 = $countdown2.querySelector(".hours");
-const $minutes2 = $countdown2.querySelector(".minutes");
-const $seconds2 = $countdown2.querySelector(".seconds");
-
-const time_calc = countDownTime({
-    days: 3,
-    hours: 12,
-    minutes: 5,
-    seconds: 0
-});
-// 302700000
-console.log("time_calc: ", time_calc);
-
 function getDateTarget(datetime) {
     const date = new Date(datetime);
     return {
@@ -32,75 +8,68 @@ function getDateTarget(datetime) {
     };
 }
 
-const { date, milliseconds } = getDateTarget($countdown.getAttribute("datetime"));
+function getCountDownElements(parentSelector) {
+    const element = document.querySelector(parentSelector);
+    return {
+        container: element,
+        days: element.querySelector(".days"),
+        hours: element.querySelector(".hours"),
+        minutes: element.querySelector(".minutes"),
+        seconds: element.querySelector(".seconds")
+    };
+}
 
-const demoCountDown = countDown(milliseconds - Date.now(), {
-    onStep: (data) => {
-        requestAnimationFrame(() => updateCountDown(data));
-    },
+function compareValues(previousValue, nextValue, element) {
+    if (element && nextValue !== previousValue) {
+        element.textContent = nextValue;
+    }
+}
+
+function updateTimeElements(elements = {}, next = {}, prev = {}) {
+    requestAnimationFrame(() => {
+        ["days", "hours", "minutes", "seconds"].map((unit) => {
+            compareValues(prev[unit], next[unit], elements[unit]);
+        });
+    });
+}
+
+/**
+ * COUNTDOWN EXAMPLE #1
+ * How long to New Year's day
+ */
+const newYearDateTime = `${new Date().getFullYear() + 1}-01-01T00:00:00`;
+const newYearCountDownElements = getCountDownElements(".newyear-countdown");
+const newYearTarget = getDateTarget(newYearDateTime);
+const newYearTimeElement = document.querySelector(".newyear-date");
+newYearTimeElement.setAttribute("datetime", newYearDateTime);
+
+const newYearCountDown = countDown(newYearTarget.milliseconds - Date.now(), {
+    onInit: (data) => updateTimeElements(newYearCountDownElements, data),
+    onStep: (prev, next) => updateTimeElements(newYearCountDownElements, next, prev),
     onReset: (data) => {
         console.log("[Countdown #1] onReset was called");
-        requestAnimationFrame(() => updateCountDown(data));
+        updateTimeElements(newYearCountDownElements, data);
     }
 });
 
-// 123456
-const demoCountDown2 = countDown(5000, {
-    onInit: (data) => {
-        console.log("[Countdown #2] onInit was called", data);
-        requestAnimationFrame(() => updateCountDown2(data));
-    },
+console.log("newYearCountDown: ", newYearCountDown);
+newYearCountDown.start();
+
+/**
+ * COUNTDOWN EXAMPLE #2
+ * Three minute countdown
+ * -- Demonstrates `countDownTime()`
+ */
+const threeMinsTarget = countDownTime({ minutes: 3 }); // e.g. 180000
+const threeMinsCountDownElements = getCountDownElements(".threeminute-countdown");
+
+const threeMinsCountDown = countDown(threeMinsTarget, {
+    onStep: (prev, next) => updateTimeElements(threeMinsCountDownElements, next, prev),
     onEnd: (data) => {
-        console.log("[Countdown #2] onEnd was called", data);
-    },
-    onStep: (data) => {
-        requestAnimationFrame(() => updateCountDown2(data));
-    },
-    onReset: (data) => {
-        console.log("[Countdown #2] onReset was called");
-        requestAnimationFrame(() => updateCountDown2(data));
+        console.log("[Countdown #2] onEnd was called. Your three minutes are up!");
+        updateTimeElements(threeMinsCountDownElements, data);
     }
 });
 
-console.log("demoCountDown: ", demoCountDown);
-console.log("demoCountDown2: ", demoCountDown2);
-
-// Update DOM elements
-$target.textContent = date;
-
-function updateUnit(previous, next, element) {
-    if (next !== previous) {
-        element.textContent = next;
-    }
-}
-
-function updateCountDown(data) {
-    // updateUnit(prev.days, data.days, $days);
-    // updateUnit(prev.hours, data.hours, $hours);
-    // updateUnit(prev.minutes, data.minutes, $minutes);
-
-    $days.textContent = data.days;
-    $hours.textContent = data.hours;
-    $minutes.textContent = data.minutes;
-
-    $seconds.textContent = data.seconds;
-    // prev = { ...data };
-}
-
-function updateCountDown2(data) {
-    $days2.textContent = data.days;
-    $hours2.textContent = data.hours;
-    $minutes2.textContent = data.minutes;
-    $seconds2.textContent = data.seconds;
-}
-
-// const sum1 = demoCountDown.status();
-// console.log("sum1: ", sum1);
-
-demoCountDown.start();
-demoCountDown2.start();
-
-// setTimeout(() => {
-//     console.log("Stop countdown #1");
-//     demoCountDown.stop();
-// }, 4000);
+console.log("threeMinsCountDown: ", threeMinsCountDown);
+threeMinsCountDown.start();

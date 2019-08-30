@@ -37,7 +37,7 @@ const aCountDown = countDown(93784000, {
         console.log(data);
         // { days: "01", hours: "02", minutes: "03", seconds: "04", target: "93784000" }
     },
-    onStep: (data) => { /* Fire `step` event */ },
+    onStep: (previousData, nextData) => { /* Fire `step` event */ },
     onEnd: (data) => { /* Fire `end` event */ },
     onReset: (data) => { /* Fire `reset` event */ }
 });

@@ -123,6 +123,7 @@ function countDown(milliseconds, options = {}) {
 
     function tick() {
         const { onEnd, onStep, zeroBased } = countDownSettings;
+        const previousData = { ...data };
 
         if (!hasTimeLeft()) {
             stopTimer();
@@ -132,7 +133,12 @@ function countDown(milliseconds, options = {}) {
         }
 
         advanceTimerData();
-        onStep.call(this, zeroBased ? addZero(data) : data);
+
+        if (zeroBased) {
+            onStep.call(this, addZero(previousData), addZero(data));
+        } else {
+            onStep.call(this, previousData, data);
+        }
 
         // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
         // more breathing space for garbage collection, etc
