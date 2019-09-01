@@ -95,12 +95,16 @@ function countDown(milliseconds, options = {}) {
     let timerId = null;
 
     function addZero(units) {
-        Object.keys(units).map((unit) => {
-            const value = Number(units[unit]);
-            return (units[unit] = value >= 0 && value < 10 ? `0${value}` : `${value}`);
-        });
+        const { zeroBased } = countDownSettings;
+        if (!zeroBased) {
+            return units;
+        }
 
-        return units;
+        return Object.keys(units).reduce((zeroedUnits, unit) => {
+            const value = Number(units[unit]);
+            zeroedUnits[unit] = value >= 0 && value < 10 ? `0${value}` : `${value}`;
+            return zeroedUnits;
+        }, {});
     }
 
     function hasTimeLeft() {
@@ -122,17 +126,17 @@ function countDown(milliseconds, options = {}) {
     }
 
     function tick() {
-        const { onEnd, onStep, zeroBased } = countDownSettings;
+        const { onEnd, onStep } = countDownSettings;
 
         if (!hasTimeLeft()) {
             stopTimer();
-            onEnd.call(countDownSettings, zeroBased ? addZero(data) : data);
+            onEnd.call(countDownSettings, addZero(data));
             timerExpired = true;
             return;
         }
 
         advanceTimerData();
-        onStep.call(countDownSettings, zeroBased ? addZero(data) : data);
+        onStep.call(countDownSettings, addZero(data));
 
         // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
         // more breathing space for garbage collection, etc
@@ -146,6 +150,7 @@ function countDown(milliseconds, options = {}) {
             return;
         }
         data = time !== data.target ? getCountDownData(time) : data;
+        pausedTimeStamp = null;
         tick();
         return data;
     }
@@ -155,52 +160,47 @@ function countDown(milliseconds, options = {}) {
         timerId = null;
     }
 
+    function status() {
+        // @todo @question: just return data?
+        const currentStatus = getCountDownData(data.target);
+        return addZero(currentStatus);
+    }
+
     function start() {
-        return startTimer(milliseconds);
-    }
-
-    function stop(options = {}) {
-        const { reset } = options;
-        const { onReset, zeroBased } = countDownSettings;
-        stopTimer();
-        if (reset) {
-            data = getCountDownData(0);
-            onReset.call(countDownSettings, zeroBased ? addZero(data) : data);
-            timerExpired = true;
+        if (!pausedTimeStamp) {
+            return startTimer(milliseconds);
         }
-        return data;
+        return startTimer(pausedTimeStamp);
     }
 
-    function pause() {
+    function stop() {
         stopTimer();
         pausedTimeStamp = data.target;
         return data;
     }
 
-    function resume() {
-        if (!pausedTimeStamp) {
-            return;
-        }
-        return startTimer(pausedTimeStamp);
+    function reset() {
+        const { onReset } = countDownSettings;
+        stopTimer();
+        pausedTimeStamp = null;
+        timerExpired = true;
+        data = getCountDownData(0);
+        onReset.call(countDownSettings, addZero(data));
+        return data;
     }
 
     (function init() {
-        const { onInit, zeroBased } = countDownSettings;
+        const { onInit } = countDownSettings;
         data = getCountDownData(milliseconds);
-        onInit.call(countDownSettings, zeroBased ? addZero(data) : data, countDownSettings);
+        onInit.call(countDownSettings, addZero(data));
     })();
 
     // PUBLIC API
     return {
-        status: () => {
-            const { zeroBased } = countDownSettings;
-            const currentStatus = getCountDownData(data.target);
-            return zeroBased ? addZero(currentStatus) : currentStatus;
-        },
+        status,
         start,
         stop,
-        pause,
-        resume
+        reset
     };
 }
 
