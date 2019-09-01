@@ -123,22 +123,16 @@ function countDown(milliseconds, options = {}) {
 
     function tick() {
         const { onEnd, onStep, zeroBased } = countDownSettings;
-        const previousData = { ...data };
 
         if (!hasTimeLeft()) {
             stopTimer();
-            onEnd.call(this, zeroBased ? addZero(data) : data);
+            onEnd.call(countDownSettings, zeroBased ? addZero(data) : data);
             timerExpired = true;
             return;
         }
 
         advanceTimerData();
-
-        if (zeroBased) {
-            onStep.call(this, addZero(previousData), addZero(data));
-        } else {
-            onStep.call(this, previousData, data);
-        }
+        onStep.call(countDownSettings, zeroBased ? addZero(data) : data);
 
         // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
         // more breathing space for garbage collection, etc
@@ -171,7 +165,7 @@ function countDown(milliseconds, options = {}) {
         stopTimer();
         if (reset) {
             data = getCountDownData(0);
-            onReset.call(this, zeroBased ? addZero(data) : data);
+            onReset.call(countDownSettings, zeroBased ? addZero(data) : data);
             timerExpired = true;
         }
         return data;
@@ -193,7 +187,7 @@ function countDown(milliseconds, options = {}) {
     (function init() {
         const { onInit, zeroBased } = countDownSettings;
         data = getCountDownData(milliseconds);
-        onInit.call(this, zeroBased ? addZero(data) : data);
+        onInit.call(countDownSettings, zeroBased ? addZero(data) : data, countDownSettings);
     })();
 
     // PUBLIC API

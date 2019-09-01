@@ -38,17 +38,25 @@ function updateTimeElements(elements = {}, next = {}, prev = {}) {
  * How long to New Year's day
  */
 const newYearDateTime = `${new Date().getFullYear() + 1}-01-01T00:00:00`;
-const newYearCountDownElements = getCountDownElements(".newyear-countdown");
 const newYearTarget = getDateTarget(newYearDateTime);
 const newYearTimeElement = document.querySelector(".newyear-date");
 newYearTimeElement.setAttribute("datetime", newYearDateTime);
 
 const newYearCountDown = countDown(newYearTarget.milliseconds - Date.now(), {
-    onInit: (data) => updateTimeElements(newYearCountDownElements, data),
-    onStep: (prev, next) => updateTimeElements(newYearCountDownElements, next, prev),
-    onReset: (data) => {
+    elements: getCountDownElements(".newyear-countdown"),
+    prevData: null,
+    onInit: function(data) {
+        this.prevData = { ...data };
+        updateTimeElements(this.elements, data);
+    },
+    onStep: function(data) {
+        updateTimeElements(this.elements, data, this.prevData);
+        this.prevData = { ...data };
+    },
+    onReset: function(data) {
         console.log("[Countdown #1] onReset was called");
-        updateTimeElements(newYearCountDownElements, data);
+        updateTimeElements(this.elements, data);
+        this.prevData = null;
     }
 });
 
@@ -61,13 +69,20 @@ newYearCountDown.start();
  * -- Demonstrates `countDownTime()`
  */
 const threeMinsTarget = countDownTime({ minutes: 3 }); // e.g. 180000
-const threeMinsCountDownElements = getCountDownElements(".threeminute-countdown");
-
 const threeMinsCountDown = countDown(threeMinsTarget, {
-    onStep: (prev, next) => updateTimeElements(threeMinsCountDownElements, next, prev),
-    onEnd: (data) => {
+    elements: getCountDownElements(".threeminute-countdown"),
+    prevData: null,
+    onInit: function(data) {
+        this.prevData = { ...data };
+    },
+    onStep: function(data) {
+        updateTimeElements(this.elements, data, this.prevData);
+        this.prevData = { ...data };
+    },
+    onEnd: function(data) {
         console.log("[Countdown #2] onEnd was called. Your three minutes are up!");
-        updateTimeElements(threeMinsCountDownElements, data);
+        updateTimeElements(this.elements, data);
+        this.prevData = null;
     }
 });
 
