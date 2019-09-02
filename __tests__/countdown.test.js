@@ -73,7 +73,8 @@ describe("Countdown module", () => {
             const spyStart = jest.spyOn(demo, "start");
             const spyStop = jest.spyOn(demo, "stop");
             demo.start();
-            demo.stop({ reset: true });
+            demo.stop();
+            demo.reset();
         }).not.toThrow("Cannot read property 'call'");
 
         expect(() => {
@@ -150,24 +151,22 @@ describe("Countdown module", () => {
         expect(demo.status()).toStrictEqual(expect.objectContaining(stoppedStatus));
     });
 
-    xit("stopping with reset flag zeroes time units & runs onReset callback", () => {
+    it("resuming countdown restarts from the remaining time", () => {
+        const demo = createCountDown(3000);
+        let pausedStatus;
+        demo.start();
+        jest.advanceTimersByTime(1000);
+        pausedStatus = demo.stop();
+        expect(demo.start().target).toBe(pausedStatus.target);
+    });
+
+    it("resetting countdown zeroes data and runs onReset callback", () => {
         const resetCallback = jest.fn((data) => data);
         const demo = createCountDown(1000, {
             zeroBased: false,
             onReset: (data) => resetCallback(data)
         });
-        demo.stop({ reset: true });
+        demo.reset();
         expect(resetCallback).toHaveReturnedWith(zeroedData);
-    });
-
-    xit("resuming (after pausing) countdown restarts from the remaining time", () => {
-        const demo = createCountDown(3000);
-        let pausedStatus;
-        expect(demo.resume()).toBeUndefined();
-        demo.start();
-        expect(demo.resume()).toBeUndefined();
-        jest.advanceTimersByTime(1000);
-        pausedStatus = demo.pause();
-        expect(demo.resume().target).toBe(pausedStatus.target);
     });
 });
