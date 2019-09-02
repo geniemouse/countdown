@@ -12,9 +12,8 @@
 1. [Methods](#methods)
     1. [`status()`](#status)
     1. [`start()`](#start)
-    1. [`stop(options)`](#stopoptions)
-    1. [`pause()`](#pause)
-    1. [`resume()`](#resume)
+    1. [`stop()`](#stop)
+    1. [`reset()`](#reset)
 1. [Additional exported utilities](#additional-exported-utilities)
     1. [`countDownTime(units)`](#countdowntimeunits)
     1. [`getCountDownData(millisecond_time)`](#getcountdowndatamillisecond_time)
@@ -37,7 +36,7 @@ const aCountDown = countDown(93784000, {
         console.log(data);
         // { days: "01", hours: "02", minutes: "03", seconds: "04", target: "93784000" }
     },
-    onStep: (previousData, nextData) => { /* Fire `step` event */ },
+    onStep: (data) => { /* Fire `step` event */ },
     onEnd: (data) => { /* Fire `end` event */ },
     onReset: (data) => { /* Fire `reset` event */ }
 });
@@ -46,6 +45,8 @@ const aCountDown = countDown(93784000, {
 ---
 
 # Options
+
+_NOTE:_ The options object is returned as the context (`this`) inside the callback functions scope, allowing for additional user-defined properties to be passed through and accessed. For example, in the demo, an `elements` property is added to store the instance's `DOM` elements.
 
 ## `zeroBased` (boolean)
 
@@ -87,7 +88,7 @@ Callback function that triggers once, when a `countDown` has reached zero.
 
 Default: Empty function
 
-Callback function that triggers once, when a `countDown` has been stopped with the reset flag set to `true` (e.g. `myCountDown.stop({ reset: true })`).
+Callback function that triggers once, when a `countDown` has been reset.
 
 ---
 
@@ -104,39 +105,28 @@ aCountDown.status()
 
 ## `start()`
 
-Starts the countdown timer.
+Starts (or restarts) the countdown timer from the countdown target time remaining. At this point, the `onStep` callbacks begin, firing once every second.
 
 ```
 aCountDown.start()
 ```
 
-## `stop(options)`
+## `stop()`
 
-Stops the countdown timer.
-
-`stop` can receive one optional parameter, an object with a `reset` property/`boolean` to zero-out all the time unit values of the countdown timer.
+Stops (or pauses) the countdown timer. At this point, the `onStep` callbacks cease.
 
 ```
 aCountDown.stop();
-
-aCountDown.stop({ reset: true });
-// { days: "00", hours: "00", minutes: "00", seconds: "00", target: "00" }
 ```
 
-## `pause()`
+## `reset()`
 
-Pauses the countdown timer; it can be restarted by calling `resume()`.
+Resets a countdown timer data to zero and fires the `onReset` callback.
 
-```
-aCountDown.pause()
-```
-
-## `resume()`
-
-Resume a previously `paused()` countdown timer.
+A reset countdown can't be restarted.
 
 ```
-aCountDown.resume()
+aCountDown.reset()
 ```
 
 ---
