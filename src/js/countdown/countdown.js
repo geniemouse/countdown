@@ -138,8 +138,9 @@ function countDown(milliseconds, options = {}) {
         advanceTimerData();
         onStep.call(countDownSettings, addZero(data));
 
-        // Using nested `setTimeout` calls instead of `setInterval` for efficiency;
+        // Using nested `setTimeout` calls for accuracy & efficiency;
         // more breathing space for garbage collection, etc
+        // (e.g. `setInterval` does not guarantee one second time intervals)
         timerId = setTimeout(tick, MILLISECOND_SECOND);
     }
 
@@ -149,9 +150,8 @@ function countDown(milliseconds, options = {}) {
         if (!hasTimeLeft() || timerId || timerExpired) {
             return;
         }
-        data = time !== data.target ? getCountDownData(time) : data;
-        pausedTimeStamp = null;
         tick();
+        pausedTimeStamp = null;
         return data;
     }
 
@@ -161,9 +161,7 @@ function countDown(milliseconds, options = {}) {
     }
 
     function status() {
-        // @todo @question: just return data?
-        const currentStatus = getCountDownData(data.target);
-        return addZero(currentStatus);
+        return addZero(data);
     }
 
     function start() {
