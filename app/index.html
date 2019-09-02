@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Countdown experiment</title>
+        <title>Countdown API</title>
 
         <!--// Meta-tags //-->
         <meta charset="utf-8" />
@@ -13,36 +13,58 @@
         <link rel="stylesheet" type="text/css" href="./assets/css/theme.css" />
     </head>
     <body>
-        <h1>Countdown demos</h1>
+        <h1>Countdown API</h1>
 
         <section>
-            <h2>Time to next New Year</h2>
-            <time class="newyear-date" datetime="2020-01-01T00:00:00">January 1</time>
-
-            <dl class="countdown newyear-countdown">
-                <dt>Days</dt>
-                <dd class="days">-</dd>
-                <dt>Hours</dt>
-                <dd class="hours">-</dd>
-                <dt>Minutes</dt>
-                <dd class="minutes">-</dd>
-                <dt>Seconds</dt>
-                <dd class="seconds">-</dd>
-            </dl>
+            <h2>Time to next New Year's day</h2>
+            <table class="countdown newyear-countdown">
+                <caption class="visually-hidden">
+                    Countdown to next
+                    <time class="newyear-date" datetime="2020-01-01T00:00:00">January 1</time>
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Days</th>
+                        <th scope="col">Hours</th>
+                        <th scope="col">Minutes</th>
+                        <th scope="col">Seconds</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="days">-</td>
+                        <td class="hours">-</td>
+                        <td class="minutes">-</td>
+                        <td class="seconds">-</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         <hr />
 
         <section>
             <h2>Your three minute countdown</h2>
-            <time datetime="PT3M">3 minutes</time>
+            <table class="countdown threeminute-countdown">
+                <caption class="visually-hidden">
+                    <time datetime="PT3M">3 minute</time>
+                    countdown
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Minutes</th>
+                        <th scope="col">Seconds</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="minutes">-</td>
+                        <td class="seconds">-</td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <dl class="countdown threeminute-countdown">
-                <dt>Minutes</dt>
-                <dd class="minutes">-</dd>
-                <dt>Seconds</dt>
-                <dd class="seconds">-</dd>
-            </dl>
+            <p class="threeminute-countdown--status" role="region" aria-live="polite"></p>
         </section>
 
         <script src="./assets/js/bundle.js"></script>

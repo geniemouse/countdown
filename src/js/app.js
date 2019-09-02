@@ -80,8 +80,10 @@ const threeMinsCountDown = countDown(threeMinsTarget, {
         this.prevData = { ...data };
     },
     onEnd: function(data) {
-        console.log("[Countdown #2] onEnd was called. Your three minutes are up!");
+        const status = document.querySelector(".threeminute-countdown--status");
         updateTimeElements(this.elements, data);
+        console.log("[Countdown #2] onEnd was called. Your three minutes are up!");
+        status.textContent = "Your three minutes are up!";
         this.prevData = null;
     }
 });
