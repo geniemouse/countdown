@@ -67,11 +67,17 @@ tr {
 
 td,
 th {
-    display: flex;
     padding: 1.2em;
     color: #fff;
     align-items: center;
     justify-content: center;
+}
+
+@supports (display: grid) {
+    td,
+    th {
+        display: flex;
+    }
 }
 
 td {
