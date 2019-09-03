@@ -7,12 +7,12 @@ import rimraf from "rimraf";
 const pkg = require("../package.json");
 const version = pkg.version;
 
-rimraf.sync(`./app/assets/js/bundle.js`);
+rimraf.sync(`./assets/js/bundle.js`);
 
 export default {
     input: `./src/js/app.js`,
     output: {
-        file: `./app/assets/js/bundle.js`,
+        file: `./assets/js/bundle.js`,
         format: "iife"
     },
     plugins: [
@@ -21,12 +21,12 @@ export default {
             version
         }),
         browsersync({
-            files: [`./app/**/*.html`, `./app/assets/**/*.css`, `./app/assets/**/*.js`],
+            files: [`./**/*.html`, `./assets/**/*.css`, `./assets/**/*.js`],
             logLevel: "info", // options: "debug"/"info"
             open: false,
             port: 4000,
             server: {
-                baseDir: `./app/`
+                baseDir: `./`
                 // directory: true
             }
         }),
