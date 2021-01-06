@@ -1,25 +1,23 @@
-# Countdown API
+# Countdown API <!-- omit in toc -->
 
-<!-- MarkdownTOC -->
+- [Initialising](#initialising)
+- [Options](#options)
+  - [`zeroBased` (boolean)](#zerobased-boolean)
+  - [`onInit` (function)](#oninit-function)
+  - [`onStep` (function)](#onstep-function)
+  - [`onEnd` (function)](#onend-function)
+  - [`onReset` (function)](#onreset-function)
+- [Methods](#methods)
+  - [`status()`](#status)
+  - [`start()`](#start)
+  - [`stop()`](#stop)
+  - [`reset()`](#reset)
+- [Additional exported utilities](#additional-exported-utilities)
+  - [`countDownTime(units)`](#countdowntimeunits)
+  - [`getCountDownData(millisecond_time)`](#getcountdowndatamillisecond_time)
+- [Install this demo project](#install-this-demo-project)
 
-1. [Initialising](#initialising)
-1. [Options](#options)
-    1. [`zeroBased` \(boolean\)](#zerobased-boolean)
-    1. [`onInit` \(function\)](#oninit-function)
-    1. [`onStep` \(function\)](#onstep-function)
-    1. [`onEnd` \(function\)](#onend-function)
-    1. [`onReset` \(function\)](#onreset-function)
-1. [Methods](#methods)
-    1. [`status()`](#status)
-    1. [`start()`](#start)
-    1. [`stop()`](#stop)
-    1. [`reset()`](#reset)
-1. [Additional exported utilities](#additional-exported-utilities)
-    1. [`countDownTime(units)`](#countdowntimeunits)
-    1. [`getCountDownData(millisecond_time)`](#getcountdowndatamillisecond_time)
-1. [Install this demo project](#install-this-demo-project)
-
-<!-- /MarkdownTOC -->
+---
 
 # Initialising
 
