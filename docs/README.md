@@ -21,7 +21,7 @@
 
 # Initialising
 
-```
+```javascript
 countDown(DATETIME_TARGET_MILLISECONDS [, options])
 
 // EXAMPLE
@@ -56,7 +56,7 @@ When `true`, values between 0 and 10 return with a leading zero.
 
 This setting remains for all further countdown API calls on a particular instance.
 
-```
+```javascript
 // zeroBased: true
 { days: "01", hours: "02", minutes: "03", seconds: "04", target: "93784000" }
 
@@ -96,7 +96,7 @@ Callback function that triggers once, when a `countDown` has been reset.
 
 Returns an object containing the current state of the countdown timer.
 
-```
+```javascript
 aCountDown.status()
 // { days: "01", hours: "02", minutes: "03", seconds: "04", target: "93784000" }
 ```
@@ -105,7 +105,7 @@ aCountDown.status()
 
 Starts (or restarts) the countdown timer from the countdown target time remaining. At this point, the `onStep` callbacks begin, firing once every second.
 
-```
+```javascript
 aCountDown.start()
 ```
 
@@ -113,7 +113,7 @@ aCountDown.start()
 
 Stops (or pauses) the countdown timer. At this point, the `onStep` callbacks cease.
 
-```
+```javascript
 aCountDown.stop();
 ```
 
@@ -123,7 +123,7 @@ Resets a countdown timer data to zero and fires the `onReset` callback.
 
 A reset countdown can't be restarted.
 
-```
+```javascript
 aCountDown.reset()
 ```
 
@@ -142,7 +142,7 @@ A utility function to calculate time in milliseconds when passed an object of ti
 
 Any properties omitted from the options default to zero.
 
-```
+```javascript
 import { countDownTime } from "./PROJECT_JAVASCRIPT_LOCATION/countdown/countdown";
 
 const countDownTargetTime = countDownTime({ days: 1, hours: 2, minutes: 3, seconds: 4 });
@@ -155,7 +155,7 @@ A recursive function that calculates and returns an object containing the time u
 
 Equivalent to using [`aCountDown.status()`](#status) from the API.
 
-```
+```javascript
 import { getCountDownData } from "./PROJECT_JAVASCRIPT_LOCATION/countdown/countdown";
 
 const data = getCountDownData(93784000);
@@ -166,15 +166,15 @@ const data = getCountDownData(93784000);
 
 # Install this demo project
 
-```
+```bash
 # Install project (one-time operation)
 git clone https://github.com/geniemouse/countdown.git
 cd countdown
-yarn install
+npm run install
 
 # ---
 
 # Then, from inside the countdown directory
 # Serve & run the countdown
-yarn start
+npm run start
 ```
