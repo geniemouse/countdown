@@ -1,8 +1,8 @@
-import resolve from "rollup-plugin-node-resolve";
-import babel from "rollup-plugin-babel";
-import browsersync from "rollup-plugin-browsersync";
-import replace from "rollup-plugin-replace";
+import resolve from "@rollup/plugin-node-resolve";
+import babel from "@rollup/plugin-babel";
+import replace from "@rollup/plugin-replace";
 import rimraf from "rimraf";
+import browsersync from "rollup-plugin-browsersync";
 
 const pkg = require("../package.json");
 const version = pkg.version;
