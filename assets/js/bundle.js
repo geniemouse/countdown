@@ -376,4 +376,4 @@
   console.log("threeMinsCountDown: ", threeMinsCountDown);
   threeMinsCountDown.start();
 
-}());
+})();

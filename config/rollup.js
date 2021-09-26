@@ -18,6 +18,7 @@ export default {
     plugins: [
         replace({
             delimiters: ["{{", "}}"],
+            preventAssignment: true,
             version
         }),
         browsersync({
@@ -32,6 +33,7 @@ export default {
         }),
         resolve(),
         babel({
+            babelHelpers: "bundled",
             exclude: "node_modules/**" // only transpile our source code
         })
     ]
