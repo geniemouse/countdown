@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "countdown",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A JavaScript countdown experiment",
   "main": "index.js",
   "scripts": {
