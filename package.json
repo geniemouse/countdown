@@ -5,12 +5,11 @@
   "description": "A JavaScript countdown experiment",
   "main": "index.js",
   "scripts": {
-    "start": "npx rollup --config config/rollup.js --watch",
+    "start": "npx rollup --bundleConfigAsCjs --config config/rollup.js --watch",
     "test": "NODE_ENV=development jest ./",
     "test:coverage": "NODE_ENV=development jest ./ --coverage",
     "test:watch": "NODE_ENV=development jest ./ --watchAll"
   },
-  "prettier": "@geniemouse/prettier-config",
   "license": "MIT",
   "keywords": [],
   "author": {},
