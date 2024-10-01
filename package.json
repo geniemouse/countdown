@@ -22,7 +22,7 @@
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.7",
-    "browser-sync": "^2.23.7",
+    "browser-sync": "^3.0.3",
     "jest": "^29.7.0",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
