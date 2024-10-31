@@ -90,3 +90,5 @@ const threeMinsCountDown = countDown(threeMinsTarget, {
 
 console.log("threeMinsCountDown: ", threeMinsCountDown);
 threeMinsCountDown.start();
+
+window.countDownTime = countDownTime;
