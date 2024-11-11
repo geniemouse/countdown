@@ -1,0 +1,13 @@
+/* Visually hide text while keeping it accessible
+/* Sometimes referred to as `.sr-only`
+/* Source: https://www.scottohara.me/blog/2017/04/14/inclusively-hidden.html
+*/
+.visually-hidden:not(:focus):not(:active) {
+	/*clip: rect(0 0 0 0);*/ /* for IE only */
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap; /* ensure proper text announcement by screen readers */
+	width: 1px;
+}
