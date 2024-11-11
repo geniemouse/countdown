@@ -5,8 +5,7 @@
 	"description": "A JavaScript Countdown API",
 	"type": "module",
 	"scripts": {
-		"build": "bun test && vite build",
-		"build:deploy": "vite build",
+		"build": "vite build",
 		"start": "bunx --bun vite",
 		"preview": "vite preview",
 		"test": "bun test",
