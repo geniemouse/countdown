@@ -1,76 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <title>Countdown API</title>
 
-        <!--// Meta-tags //-->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, shrink-to-fit=no">
-        <meta name="keywords" content="">
-        <meta name="description" content="">
+<head>
+	<title>Countdown API</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<meta name="robots" content="noindex">
+	<meta name="format-detection" content="email=no,telephone=no">
 
-        <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-        <link rel="icon" href="./favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-        <!--// Stylesheets //-->
-        <link rel="stylesheet" type="text/css" href="./assets/css/theme.css">
-    </head>
-    <body>
-        <h1>Countdown API</h1>
-        <p>For more information, read the <a href="./docs/">API documentation</a>.</p>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
+	</style>
+</head>
 
-        <section>
-            <h2>Time to next New Year's day</h2>
-            <table class="countdown newyear-countdown">
-                <caption class="visually-hidden">
-                    Countdown to next
-                    <time class="newyear-date" datetime="2020-01-01T00:00:00">January 1</time>
-                </caption>
-                <thead>
-                    <tr>
-                        <th scope="col">Days</th>
-                        <th scope="col">Hours</th>
-                        <th scope="col">Minutes</th>
-                        <th scope="col">Seconds</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="days">-</td>
-                        <td class="hours">-</td>
-                        <td class="minutes">-</td>
-                        <td class="seconds">-</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+<body>
+	<h1>Countdown API <span id="project_version"></span></h1>
+	<p>
+		For more information, read the
+		<a href="/docs/">API documentation</a>.
+		<!-- ^^ @todo: Check that docs link still works when published on
+		 GitHub Pages -->
+	</p>
 
-        <hr>
+	<p>To view/play with the demonstration countdown objects, open the browser console.</p>
 
-        <section>
-            <h2>Your three minute countdown</h2>
-            <table class="countdown threeminute-countdown">
-                <caption class="visually-hidden">
-                    <time datetime="PT3M">3 minute</time>
-                    countdown
-                </caption>
-                <thead>
-                    <tr>
-                        <th scope="col">Minutes</th>
-                        <th scope="col">Seconds</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="minutes">-</td>
-                        <td class="seconds">-</td>
-                    </tr>
-                </tbody>
-            </table>
 
-            <p class="threeminute-countdown--status" role="region" aria-live="polite"></p>
-        </section>
+	<div class="countdowns">
 
-        <script src="./assets/js/bundle.js"></script>
-    </body>
+		<article>
+			<h2>
+				Countdown to New Year's day
+				<time datetime="01-01">(01 January)</time>
+			</h2>
+
+			<p class="countdown countdown_newyear">
+				<time class="date_newyear" datetime="P0DT0H0M0S">
+					<span class="days">-</span> days
+					<span class="hours">-</span> hours
+					<span class="minutes">-</span> minutes
+					<span class="seconds">-</span> seconds
+				</time>
+			</p>
+		</article>
+
+		<article>
+			<h2>
+				<!-- @todo: Review if this live region is valid & announces sensibly -->
+				<span aria-live="polite" role="region">
+					<time datetime="PT3M">Three minute</time> countdown
+					<span class="countdown_threeminutes--status">has started</span>
+				</span>
+			</h2>
+
+			<p class="countdown countdown_threeminutes">
+				<time datetime="PT3M">
+					<span class="minutes">00</span>
+					<span class="separator_clock">:</span>
+					<span class="seconds">00</span>
+				</time>
+			</p>
+		</article>
+
+	</div>
+
+	<footer>
+		<p>
+			Demonstration built using <a href="https://bun.sh" target="_blank" rel="noopener">Bun</a> &amp; <a
+				href="https://vite.dev" target="_blank" rel="noopener">Vite</a>.
+		</p>
+	</footer>
+
+	<script type="module" src="/main.js" async></script>
+</body>
+
 </html>

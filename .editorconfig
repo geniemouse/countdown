@@ -8,8 +8,8 @@
 #
 # @NOTE:
 # - Editor/IDE may require add-on/extension install to read this file
-# - If using Prettier to format code, keep the settings between the two configs
-#   consistent
+# - If using Biome/Prettier to format code, keep the settings between the two
+#   configuration files consistent
 
 # All files
 root = true
@@ -19,9 +19,9 @@ root = true
 charset = utf-8
 end_of_line = lf
 indent_size = 4
-indent_style = space
+indent_style = tab
 insert_final_newline = true
-max_line_length = 120
+max_line_length = 80
 trim_trailing_whitespace = true
 
 
@@ -31,5 +31,4 @@ max_line_length = off
 trim_trailing_whitespace = false
 
 [*.json]
-indent_style = space
 indent_size = 2

@@ -1,0 +1,11 @@
+# BunFig.toml
+# ===========
+
+[test]
+# Always enable code coverage report
+coverage = true
+# By default coverage reports will include test files, here is the opt-out
+coverageSkipTestFiles = true
+# Include the Happy DOM simulated browser environment to all tests
+preload = ["./testsuite/_happydom.js"]
+root = "./js"

@@ -2,20 +2,21 @@
 
 - [Initialising](#initialising)
 - [Options](#options)
-  - [`zeroBased` (boolean)](#zerobased-boolean)
-  - [`onInit` (function)](#oninit-function)
-  - [`onStep` (function)](#onstep-function)
-  - [`onEnd` (function)](#onend-function)
-  - [`onReset` (function)](#onreset-function)
+	- [`zeroBased` (boolean)](#zerobased-boolean)
+	- [`onInit` (function)](#oninit-function)
+	- [`onStep` (function)](#onstep-function)
+	- [`onEnd` (function)](#onend-function)
+	- [`onReset` (function)](#onreset-function)
 - [Methods](#methods)
-  - [`status()`](#status)
-  - [`start()`](#start)
-  - [`stop()`](#stop)
-  - [`reset()`](#reset)
+	- [`status()`](#status)
+	- [`start()`](#start)
+	- [`stop()`](#stop)
+	- [`reset()`](#reset)
 - [Additional exported utilities](#additional-exported-utilities)
-  - [`countDownTime(units)`](#countdowntimeunits)
-  - [`getCountDownData(millisecond_time)`](#getcountdowndatamillisecond_time)
+	- [`calculateCountdown(millisecond_time)`](#calculatecountdownmillisecond_time)
+	- [`sumMilliseconds(units)`](#summillisecondsunits)
 - [Install this demo project](#install-this-demo-project)
+- [Other commands](#other-commands)
 
 ---
 
@@ -25,7 +26,7 @@
 countDown(DATETIME_TARGET_MILLISECONDS [, options])
 
 // EXAMPLE
-import countDown from "./PROJECT_JAVASCRIPT_LOCATION/countdown/countdown";
+import countDown from "./PROJECT_JAVASCRIPT_LOCATION/countdown/countdown.js";
 
 const aCountDown = countDown(93784000, {
     zeroBased: true,
@@ -80,13 +81,13 @@ Callback function that triggers once every second, while a `countDown` is runnin
 
 Default: Empty function
 
-Callback function that triggers once, when a `countDown` has reached zero.
+Callback function that triggers once, when a `countDown` reaches zero.
 
 ## `onReset` (function)
 
 Default: Empty function
 
-Callback function that triggers once, when a `countDown` has been reset.
+Callback function that triggers once, when a `countDown` is reset. Once reset, it can't be restarted; a new initialisation would be required.
 
 ---
 
@@ -103,7 +104,7 @@ aCountDown.status()
 
 ## `start()`
 
-Starts (or restarts) the countdown timer from the countdown target time remaining. At this point, the `onStep` callbacks begin, firing once every second.
+Starts (or restarts) the countdown timer from the target time remaining. At this point, `onStep` callbacks begin/resume, firing once every second.
 
 ```javascript
 aCountDown.start()
@@ -111,7 +112,7 @@ aCountDown.start()
 
 ## `stop()`
 
-Stops (or pauses) the countdown timer. At this point, the `onStep` callbacks cease.
+Stops (or pauses) the countdown timer. At this point, `onStep` callbacks cease.
 
 ```javascript
 aCountDown.stop();
@@ -131,50 +132,73 @@ aCountDown.reset()
 
 # Additional exported utilities
 
-## `countDownTime(units)`
-
-A utility function to calculate time in milliseconds when passed an object of time units:
-
--   days
--   hours
--   minutes
--   seconds
-
-Any properties omitted from the options default to zero.
-
-```javascript
-import { countDownTime } from "./PROJECT_JAVASCRIPT_LOCATION/countdown/countdown";
-
-const countDownTargetTime = countDownTime({ days: 1, hours: 2, minutes: 3, seconds: 4 });
-// 93784000
-```
-
-## `getCountDownData(millisecond_time)`
+## `calculateCountdown(millisecond_time)`
 
 A recursive function that calculates and returns an object containing the time unit breakdown of a millisecond target time (without the rest of countdown API).
 
 Equivalent to using [`aCountDown.status()`](#status) from the API.
 
 ```javascript
-import { getCountDownData } from "./PROJECT_JAVASCRIPT_LOCATION/countdown/countdown";
+import { calculateCountdown } from "./PROJECT_LOCATION/countdown/countdown.js";
 
-const data = getCountDownData(93784000);
+const data = calculateCountdown(93784000);
 // { days: "01", hours: "02", minutes: "03", seconds: "04", target: "93784000" }
+```
+
+## `sumMilliseconds(units)`
+
+A utility function that totals the time (in milliseconds) from a specified 
+unit/value object input:
+
+-   "days"
+-   "hours"
+-   "minutes"
+-   "seconds"
+
+Any properties omitted from the options object default to zero.
+
+```javascript
+import { sumMilliseconds } from "./PROJECT_LOCATION/countdown/countdown.js";
+
+var threeMinuteTotal = sumMilliseconds({ minutes: 3 });
+// => 180000 (ms)
+
+var threeDayTotal =  sumMilliseconds({ minutes: 62, seconds: 5 });
+// => 3725000 (ms)
 ```
 
 ---
 
 # Install this demo project
 
+This project is best run using `bun`. For instructions on installation, visit the [Bun website](https://bun.sh/).
+
 ```bash
 # Install project (one-time operation)
 git clone https://github.com/geniemouse/countdown.git
 cd countdown
-npm run install
+bun install
 
 # ---
 
 # Then, from inside the countdown directory
-# Serve & run the countdown
-npm run start
+# Run & serve the countdown demo in developer mode
+bun start
+```
+
+# Other commands
+
+```bash
+# Developer mode: run & serve demo, including live reload/hot-module replacement
+bun start
+
+# ---
+# Run unit tests:
+bun test
+# Or
+bun test:watch
+
+# Final build/preview bundling, etc.
+bun preview
+bun build
 ```
