@@ -2,9 +2,7 @@ import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-	server: {
-		open: true,
-	},
+	base: "/countdown/",
 	build: {
 		rollupOptions: {
 			input: {
@@ -13,6 +11,9 @@ export default defineConfig({
 				// docs: resolve(__dirname, "docs/README.md"), // GitHub Pages requirement
 			},
 		},
+	},
+	server: {
+		open: true,
 	},
 	plugins: [],
 });
