@@ -34,6 +34,8 @@ jobs:
         
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.1.30
         
       - name: Install dependencies
         run: bun install
@@ -47,9 +49,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload static file directory
-          name: production-files
           path: './dist'
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
