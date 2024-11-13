@@ -22,8 +22,6 @@
 
 # Initialising
 
-Root-level test.
-
 ```javascript
 countDown(DATETIME_TARGET_MILLISECONDS [, options])
 
