@@ -8,7 +8,7 @@ export default defineConfig({
 			input: {
 				// Route path mapping
 				main: resolve(__dirname, "index.html"),
-				// docs: resolve(__dirname, "docs/README.md"), // GitHub Pages requirement
+				docs: resolve(__dirname, "docs/README.md"), // For GitHub Pages
 			},
 		},
 	},
