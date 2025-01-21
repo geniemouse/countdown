@@ -16,7 +16,7 @@
 		"@biomejs/biome": "^1.9.4",
 		"@happy-dom/global-registrator": "^15.11.7",
 		"@sinonjs/fake-timers": "^13.0.5",
-		"vite": "^5.4.11",
+		"vite": "^5.4.14",
 		"vite-plugin-static-copy": "^2.2.0"
 	},
 	"repository": {
